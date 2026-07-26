@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.env
+*.local
+uploads/fotos/
+uploads/vehiculos/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.sw?
+
+# OS
+Thumbs.db
+desktop.ini
