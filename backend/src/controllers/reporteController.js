@@ -1,6 +1,11 @@
 const { Servicio, Conductor, Vehiculo, Usuario, TipoServicio, Ubicacion, sequelize } = require('../models');
 const { Op, fn, col, literal } = require('sequelize');
 
+function toUTC(dateStr, tzOffset) {
+  const d = new Date(dateStr);
+  return new Date(d.getTime() + (tzOffset || 0) * 60000);
+}
+
 const getStats = async (req, res) => {
   try {
     const totalConductores = await Conductor.count();
@@ -32,7 +37,8 @@ const getStats = async (req, res) => {
 
 const getServicios = async (req, res) => {
   try {
-    const { conductor_id, vehiculo_id, tipo_servicio_id, estado, fecha_inicio, fecha_fin } = req.query;
+    const { conductor_id, vehiculo_id, tipo_servicio_id, estado, fecha_inicio, fecha_fin, tz_offset } = req.query;
+    const tz = parseInt(tz_offset) || 0;
 
     const where = {};
     if (conductor_id) {
@@ -44,12 +50,8 @@ const getServicios = async (req, res) => {
     if (estado) where.estado = estado;
     if (fecha_inicio || fecha_fin) {
       where.hora_inicio = {};
-      if (fecha_inicio) where.hora_inicio[Op.gte] = new Date(fecha_inicio);
-      if (fecha_fin) {
-        const end = new Date(fecha_fin);
-        end.setDate(end.getDate() + 1);
-        where.hora_inicio[Op.lt] = end;
-      }
+      if (fecha_inicio) where.hora_inicio[Op.gte] = toUTC(fecha_inicio, tz);
+      if (fecha_fin) where.hora_inicio[Op.lte] = toUTC(fecha_fin + 'T23:59:59', tz);
     }
 
     const servicios = await Servicio.findAll({
@@ -78,17 +80,14 @@ const getServicios = async (req, res) => {
 
 const getIngresos = async (req, res) => {
   try {
-    const { fecha_inicio, fecha_fin } = req.query;
+    const { fecha_inicio, fecha_fin, tz_offset } = req.query;
+    const tz = parseInt(tz_offset) || 0;
 
     const where = { estado: 'finalizado' };
     if (fecha_inicio || fecha_fin) {
       where.hora_inicio = {};
-      if (fecha_inicio) where.hora_inicio[Op.gte] = new Date(fecha_inicio);
-      if (fecha_fin) {
-        const end = new Date(fecha_fin);
-        end.setDate(end.getDate() + 1);
-        where.hora_inicio[Op.lt] = end;
-      }
+      if (fecha_inicio) where.hora_inicio[Op.gte] = toUTC(fecha_inicio, tz);
+      if (fecha_fin) where.hora_inicio[Op.lte] = toUTC(fecha_fin + 'T23:59:59', tz);
     }
 
     const resultado = await Servicio.findOne({
@@ -112,17 +111,14 @@ const getIngresos = async (req, res) => {
 
 const getReporteConductores = async (req, res) => {
   try {
-    const { fecha_inicio, fecha_fin } = req.query;
+    const { fecha_inicio, fecha_fin, tz_offset } = req.query;
+    const tz = parseInt(tz_offset) || 0;
 
     const servicioWhere = {};
     if (fecha_inicio || fecha_fin) {
       servicioWhere.hora_inicio = {};
-      if (fecha_inicio) servicioWhere.hora_inicio[Op.gte] = new Date(fecha_inicio);
-      if (fecha_fin) {
-        const end = new Date(fecha_fin);
-        end.setDate(end.getDate() + 1);
-        servicioWhere.hora_inicio[Op.lt] = end;
-      }
+      if (fecha_inicio) servicioWhere.hora_inicio[Op.gte] = toUTC(fecha_inicio, tz);
+      if (fecha_fin) servicioWhere.hora_inicio[Op.lte] = toUTC(fecha_fin + 'T23:59:59', tz);
     }
 
     const conductores = await Conductor.findAll({

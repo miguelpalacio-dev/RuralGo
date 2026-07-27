@@ -127,7 +127,7 @@ const getBarWidth = (total) => {
 };
 
 const buscar = async () => {
-  const params = {};
+  const params = { tz_offset: new Date().getTimezoneOffset() };
   if (fechaInicio.value) params.fecha_inicio = fechaInicio.value;
   if (fechaFin.value) params.fecha_fin = fechaFin.value;
 
