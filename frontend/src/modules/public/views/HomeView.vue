@@ -84,7 +84,7 @@ onMounted(async () => {
   }
 
   try {
-    const { data } = await api.get('/conductores/disponibles');
+    const { data } = await api.get('/disponibles');
     data.forEach((c) => {
       const marker = L.marker([c.ubicacion.latitud, c.ubicacion.longitud], { icon: motoIcon })
         .addTo(map)

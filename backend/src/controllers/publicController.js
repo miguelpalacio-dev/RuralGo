@@ -24,7 +24,7 @@ const getDisponibles = async (req, res) => {
     });
 
     const resultado = conductores
-      .filter((c) => c.ubicacion)
+      .filter((c) => c.ubicacion && new Date(c.ubicacion.ultima_actualizacion) > new Date(Date.now() - 5 * 60 * 1000))
       .map((c) => ({
         id: c.id,
         usuario: c.usuario,

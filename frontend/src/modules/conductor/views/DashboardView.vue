@@ -26,6 +26,19 @@
       <router-link to="/conductor/vehiculos" class="btn btn-outline" style="width:100%; margin-top:12px">Cambiar vehículo</router-link>
     </div>
 
+    <div class="card ubicacion-card">
+      <h4 style="margin-bottom: 8px">📍 Compartir Ubicación</h4>
+      <p v-if="!ubicacionActiva" class="ubicacion-hint">Activa para que los pasajeros te vean en el mapa</p>
+      <p v-else class="ubicacion-activa">
+        ● Enviando ubicación
+        <span v-if="precision"> · precisión {{ Math.round(precision) }}m</span>
+      </p>
+      <p v-if="errorPermiso" class="error-text">⚠️ Permiso denegado. Actívalo en la configuración del navegador.</p>
+      <button @click="toggleUbicacion" class="btn toggle-btn" :class="ubicacionActiva ? 'btn-danger' : 'btn-primary'">
+        {{ ubicacionActiva ? 'Detener ubicación' : 'Activar ubicación' }}
+      </button>
+    </div>
+
     <router-link to="/conductor/servicio" class="card card-action">
       <span>📝</span>
       <div>
@@ -45,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import ConductorLayout from '../../../layouts/ConductorLayout.vue';
 import PhotoUpload from '../../../components/PhotoUpload.vue';
 import { useAuthStore } from '../../../stores/auth';
@@ -55,9 +68,47 @@ const auth = useAuthStore();
 const conductorStore = useConductorStore();
 const disponible = ref(false);
 const vehiculoActivo = ref(null);
+const ubicacionActiva = ref(false);
+const precision = ref(null);
+const errorPermiso = ref(false);
+let geoWatchId = null;
 
 const toggleDisp = async () => {
   disponible.value = await conductorStore.toggleDisponibilidad();
+};
+
+const toggleUbicacion = () => {
+  if (ubicacionActiva.value) {
+    navigator.geolocation.clearWatch(geoWatchId);
+    geoWatchId = null;
+    ubicacionActiva.value = false;
+    return;
+  }
+
+  if (!navigator.geolocation) {
+    errorPermiso.value = true;
+    return;
+  }
+
+  geoWatchId = navigator.geolocation.watchPosition(
+    async (pos) => {
+      errorPermiso.value = false;
+      precision.value = pos.coords.accuracy;
+      try {
+        await conductorStore.actualizarUbicacion(
+          pos.coords.latitude,
+          pos.coords.longitude,
+          pos.coords.accuracy
+        );
+      } catch (e) { console.error('Error enviando ubicación:', e); }
+    },
+    (err) => {
+      if (err.code === err.PERMISSION_DENIED) errorPermiso.value = true;
+      ubicacionActiva.value = false;
+    },
+    { enableHighAccuracy: false, maximumAge: 10000, timeout: 15000 }
+  );
+  ubicacionActiva.value = true;
 };
 
 onMounted(async () => {
@@ -66,6 +117,10 @@ onMounted(async () => {
     disponible.value = data.disponible;
     vehiculoActivo.value = data.vehiculoActivo;
   } catch (e) { console.error(e); }
+});
+
+onUnmounted(() => {
+  if (geoWatchId != null) navigator.geolocation.clearWatch(geoWatchId);
 });
 </script>
 
@@ -83,4 +138,7 @@ onMounted(async () => {
 .card-action:hover { transform: translateY(-2px); }
 .card-action span { font-size: 2rem; }
 .card-action p { color: #666; font-size: 13px; margin-top: 2px; }
+.ubicacion-hint { color: #666; font-size: 13px; margin-bottom: 10px; }
+.ubicacion-activa { color: #27ae60; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+.error-text { color: #e74c3c; font-size: 13px; margin-bottom: 10px; }
 </style>
