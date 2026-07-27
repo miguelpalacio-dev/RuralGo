@@ -48,10 +48,17 @@ const mapContainer = ref(null);
 const conductorSeleccionado = ref(null);
 
 const motoIcon = L.divIcon({
-  html: '<div style="font-size:24px;text-shadow:0 2px 4px rgba(0,0,0,0.3)">🏍️</div>',
-  className: '',
-  iconSize: [30, 30],
-  iconAnchor: [15, 15],
+  html: `<div style="
+    width:42px;height:42px;border-radius:50%;
+    background:#2ecc71;color:white;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;cursor:pointer;
+    box-shadow:0 3px 12px rgba(46,204,113,0.5);
+    border:3px solid white;
+  ">🏍️</div>`,
+  className: 'moto-marker-wrap',
+  iconSize: [42, 42],
+  iconAnchor: [21, 21],
 });
 
 const userIcon = L.divIcon({
@@ -126,4 +133,9 @@ onMounted(async () => {
 
 .footer { background: white; padding: 14px; text-align: center; border-top: 1px solid #eee; z-index: 2; }
 .footer a { color: #2ecc71; font-weight: 600; font-size: 14px; }
+</style>
+
+<style>
+.moto-marker-wrap { transition: transform 0.15s ease; }
+.moto-marker-wrap:hover { transform: scale(1.15); }
 </style>
