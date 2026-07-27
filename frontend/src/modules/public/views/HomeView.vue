@@ -3,7 +3,7 @@
     <header class="header">
       <img src="/logo.png" alt="RuralGo" class="logo" />
       <h1>RuralGo</h1>
-      <span v-if="autoCount > 0" class="refresh-badge">{{ refreshCount }}/4</span>
+      <span v-if="autoCount > 0" class="refresh-badge">Buscando<span class="dots">{{ dots }}</span></span>
     </header>
 
     <div id="map" ref="mapContainer"></div>
@@ -61,10 +61,12 @@ const conductorSeleccionado = ref(null);
 const refreshCount = ref(0);
 const autoCount = ref(0);
 const loading = ref(false);
+const dots = ref('');
 let map = null;
 let conductorLayer = null;
 let refreshTimer = null;
 let autoTimer = null;
+let dotsTimer = null;
 
 const motoIcon = L.divIcon({
   html: `<div style="
@@ -110,10 +112,27 @@ const loadConductores = async () => {
   }
 };
 
+const startDots = () => {
+  const frames = ['', '.', '..', '...'];
+  let i = 0;
+  dots.value = frames[0];
+  dotsTimer = setInterval(() => {
+    i = (i + 1) % frames.length;
+    dots.value = frames[i];
+  }, 600);
+};
+
+const stopDots = () => {
+  clearInterval(dotsTimer);
+  dotsTimer = null;
+  dots.value = '';
+};
+
 const startAutoRefresh = () => {
   clearAutoRefresh();
   refreshCount.value = 0;
   autoCount.value = 4;
+  startDots();
   loadConductores();
   autoTimer = setInterval(() => {
     refreshCount.value++;
@@ -128,6 +147,7 @@ const clearAutoRefresh = () => {
   autoTimer = null;
   autoCount.value = 0;
   refreshCount.value = 0;
+  stopDots();
 };
 
 const manualRefresh = () => {
@@ -182,8 +202,9 @@ onUnmounted(() => {
 .header h1 { font-size: 20px; font-weight: 700; flex: 1; }
 .refresh-badge {
   background: rgba(255,255,255,0.25); padding: 2px 10px; border-radius: 12px;
-  font-size: 12px; font-weight: 600;
+  font-size: 12px; font-weight: 600; display: inline-flex; align-items: baseline;
 }
+.dots { display: inline-block; width: 1.5em; text-align: left; }
 #map { flex: 1; border-radius: 0; z-index: 1; }
 
 .refresh-btn {
