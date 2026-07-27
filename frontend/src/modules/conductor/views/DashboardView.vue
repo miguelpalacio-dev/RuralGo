@@ -9,6 +9,11 @@
           <span class="badge" :class="disponible ? 'badge-success' : 'badge-danger'">
             {{ disponible ? '● Disponible' : '○ No disponible' }}
           </span>
+          <p v-if="disponible && ubicacionActiva" class="ubicacion-status">
+            📍 Ubicación activa
+            <span v-if="precision"> · {{ Math.round(precision) }}m</span>
+          </p>
+          <p v-if="errorPermiso" class="error-text">⚠️ Permiso de ubicación denegado</p>
         </div>
       </div>
       <button @click="toggleDisp" class="btn toggle-btn" :class="disponible ? 'btn-danger' : 'btn-primary'">
@@ -24,19 +29,6 @@
       </div>
       <p v-else class="sin-vehiculo">Sin vehículo seleccionado</p>
       <router-link to="/conductor/vehiculos" class="btn btn-outline" style="width:100%; margin-top:12px">Cambiar vehículo</router-link>
-    </div>
-
-    <div class="card ubicacion-card">
-      <h4 style="margin-bottom: 8px">📍 Compartir Ubicación</h4>
-      <p v-if="!ubicacionActiva" class="ubicacion-hint">Activa para que los pasajeros te vean en el mapa</p>
-      <p v-else class="ubicacion-activa">
-        ● Enviando ubicación
-        <span v-if="precision"> · precisión {{ Math.round(precision) }}m</span>
-      </p>
-      <p v-if="errorPermiso" class="error-text">⚠️ Permiso denegado. Actívalo en la configuración del navegador.</p>
-      <button @click="toggleUbicacion" class="btn toggle-btn" :class="ubicacionActiva ? 'btn-danger' : 'btn-primary'">
-        {{ ubicacionActiva ? 'Detener ubicación' : 'Activar ubicación' }}
-      </button>
     </div>
 
     <router-link to="/conductor/servicio" class="card card-action">
@@ -73,20 +65,9 @@ const precision = ref(null);
 const errorPermiso = ref(false);
 let geoWatchId = null;
 
-const toggleDisp = async () => {
-  disponible.value = await conductorStore.toggleDisponibilidad();
-};
-
-const toggleUbicacion = () => {
-  if (ubicacionActiva.value) {
-    navigator.geolocation.clearWatch(geoWatchId);
-    geoWatchId = null;
-    ubicacionActiva.value = false;
-    return;
-  }
-
-  if (!navigator.geolocation) {
-    errorPermiso.value = true;
+const startUbicacion = () => {
+  if (ubicacionActiva.value || !navigator.geolocation) {
+    if (!navigator.geolocation) errorPermiso.value = true;
     return;
   }
 
@@ -103,7 +84,11 @@ const toggleUbicacion = () => {
       } catch (e) { console.error('Error enviando ubicación:', e); }
     },
     (err) => {
-      if (err.code === err.PERMISSION_DENIED) errorPermiso.value = true;
+      if (err.code === err.PERMISSION_DENIED) {
+        errorPermiso.value = true;
+        disponible.value = false;
+        conductorStore.toggleDisponibilidad();
+      }
       ubicacionActiva.value = false;
     },
     { enableHighAccuracy: false, maximumAge: 10000, timeout: 15000 }
@@ -111,16 +96,35 @@ const toggleUbicacion = () => {
   ubicacionActiva.value = true;
 };
 
+const stopUbicacion = () => {
+  if (geoWatchId != null) {
+    navigator.geolocation.clearWatch(geoWatchId);
+    geoWatchId = null;
+  }
+  ubicacionActiva.value = false;
+  precision.value = null;
+};
+
+const toggleDisp = async () => {
+  disponible.value = await conductorStore.toggleDisponibilidad();
+  if (disponible.value) {
+    startUbicacion();
+  } else {
+    stopUbicacion();
+  }
+};
+
 onMounted(async () => {
   try {
     const data = await conductorStore.fetchMiConductor();
     disponible.value = data.disponible;
     vehiculoActivo.value = data.vehiculoActivo;
+    if (data.disponible) startUbicacion();
   } catch (e) { console.error(e); }
 });
 
 onUnmounted(() => {
-  if (geoWatchId != null) navigator.geolocation.clearWatch(geoWatchId);
+  stopUbicacion();
 });
 </script>
 
@@ -129,6 +133,8 @@ onUnmounted(() => {
 .perfil-header { display: flex; align-items: center; gap: 20px; margin-bottom: 15px; }
 .perfil-info h3 { margin-bottom: 2px; }
 .email { color: #666; font-size: 13px; margin-bottom: 6px; }
+.ubicacion-status { color: #27ae60; font-size: 12px; font-weight: 600; margin-top: 4px; }
+.error-text { color: #e74c3c; font-size: 12px; margin-top: 4px; }
 .toggle-btn { width: 100%; }
 .vehiculo-info { margin: 10px 0; }
 .placa { font-size: 1.3rem; font-weight: 700; color: #2c3e50; }
@@ -138,7 +144,4 @@ onUnmounted(() => {
 .card-action:hover { transform: translateY(-2px); }
 .card-action span { font-size: 2rem; }
 .card-action p { color: #666; font-size: 13px; margin-top: 2px; }
-.ubicacion-hint { color: #666; font-size: 13px; margin-bottom: 10px; }
-.ubicacion-activa { color: #27ae60; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
-.error-text { color: #e74c3c; font-size: 13px; margin-bottom: 10px; }
 </style>
