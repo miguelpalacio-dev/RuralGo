@@ -44,8 +44,12 @@ const getServicios = async (req, res) => {
     if (estado) where.estado = estado;
     if (fecha_inicio || fecha_fin) {
       where.hora_inicio = {};
-      if (fecha_inicio) where.hora_inicio[Op.gte] = new Date(fecha_inicio + 'T00:00:00');
-      if (fecha_fin) where.hora_inicio[Op.lte] = new Date(fecha_fin + 'T23:59:59');
+      if (fecha_inicio) where.hora_inicio[Op.gte] = new Date(fecha_inicio);
+      if (fecha_fin) {
+        const end = new Date(fecha_fin);
+        end.setDate(end.getDate() + 1);
+        where.hora_inicio[Op.lt] = end;
+      }
     }
 
     const servicios = await Servicio.findAll({
@@ -79,8 +83,12 @@ const getIngresos = async (req, res) => {
     const where = { estado: 'finalizado' };
     if (fecha_inicio || fecha_fin) {
       where.hora_inicio = {};
-      if (fecha_inicio) where.hora_inicio[Op.gte] = new Date(fecha_inicio + 'T00:00:00');
-      if (fecha_fin) where.hora_inicio[Op.lte] = new Date(fecha_fin + 'T23:59:59');
+      if (fecha_inicio) where.hora_inicio[Op.gte] = new Date(fecha_inicio);
+      if (fecha_fin) {
+        const end = new Date(fecha_fin);
+        end.setDate(end.getDate() + 1);
+        where.hora_inicio[Op.lt] = end;
+      }
     }
 
     const resultado = await Servicio.findOne({
@@ -109,8 +117,12 @@ const getReporteConductores = async (req, res) => {
     const servicioWhere = {};
     if (fecha_inicio || fecha_fin) {
       servicioWhere.hora_inicio = {};
-      if (fecha_inicio) servicioWhere.hora_inicio[Op.gte] = new Date(fecha_inicio + 'T00:00:00');
-      if (fecha_fin) servicioWhere.hora_inicio[Op.lte] = new Date(fecha_fin + 'T23:59:59');
+      if (fecha_inicio) servicioWhere.hora_inicio[Op.gte] = new Date(fecha_inicio);
+      if (fecha_fin) {
+        const end = new Date(fecha_fin);
+        end.setDate(end.getDate() + 1);
+        servicioWhere.hora_inicio[Op.lt] = end;
+      }
     }
 
     const conductores = await Conductor.findAll({
