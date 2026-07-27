@@ -51,7 +51,7 @@
               <span class="recent-dest">{{ s.destino_texto }}</span>
             </div>
             <div class="recent-right">
-              <span class="recent-price">${{ s.precio }}</span>
+              <span class="recent-price">${{ Number(s.precio).toLocaleString('es-CO') }}</span>
               <span class="recent-date">{{ formatDate(s.hora_inicio) }}</span>
             </div>
           </div>
