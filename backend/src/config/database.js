@@ -3,13 +3,13 @@ require('dotenv').config();
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
-  logging: console.log,
+  logging: false,
   define: {
     timestamps: true,
     underscored: true,
   },
   dialectOptions: {
-    ssl: {
+    ssl: process.env.NODE_ENV === 'production' ? false : {
       require: true,
       rejectUnauthorized: false,
     },
@@ -20,7 +20,6 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     acquire: 30000,
     idle: 10000,
   },
-  connectTimeout: 10000,
 });
 
 module.exports = sequelize;
