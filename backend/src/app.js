@@ -48,14 +48,6 @@ app.use('/api/tipos-servicio', tiposServicioRoutes);
 
 const PORT = process.env.PORT || 3000;
 
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled rejection:', err);
-});
-
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught exception:', err);
-});
-
 const start = async () => {
   try {
     await sequelize.authenticate();
