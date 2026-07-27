@@ -85,7 +85,7 @@
               <td>{{ s.tipoServicio?.nombre }}</td>
               <td>{{ s.origen_nombre }}</td>
               <td>{{ s.destino_texto }}</td>
-              <td><strong>${{ s.precio }}</strong></td>
+              <td><strong>${{ Number(s.precio).toLocaleString('es-CO') }}</strong></td>
               <td>
                 <span class="badge" :class="{
                   'badge-success': s.estado === 'finalizado',
@@ -105,7 +105,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import AdminLayout from '../../../layouts/AdminLayout.vue';
 import { useAdminStore } from '../../../stores/admin';
 
@@ -136,9 +136,11 @@ const buscar = async () => {
   } else if (tipoReporte.value === 'ingresos') {
     ingresos.value = await adminStore.fetchIngresos(params);
   } else {
-    reporteConductores.value = await adminStore.fetchReporteConductores();
+    reporteConductores.value = await adminStore.fetchReporteConductores(params);
   }
 };
+
+watch(tipoReporte, () => { buscar(); });
 </script>
 
 <style scoped>
@@ -164,12 +166,12 @@ const buscar = async () => {
 .chart-legend { overflow-x: auto; }
 .chart-legend table { width: 100%; border-collapse: collapse; }
 .chart-legend th, .chart-legend td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
-.chart-legend th { background: #f8f9fa; font-weight: 600; }
+.chart-legend th { background: #f8f9fa; color: #2c3e50; font-weight: 600; }
 
 .table-responsive { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
-th { background: #f8f9fa; font-weight: 600; }
+.table-responsive table { width: 100%; border-collapse: collapse; }
+.table-responsive th, .table-responsive td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+.table-responsive th { background: #f8f9fa; color: #2c3e50; font-weight: 600; }
 .empty-row { text-align: center; color: #95a5a6; padding: 30px !important; }
 
 @media (max-width: 768px) {

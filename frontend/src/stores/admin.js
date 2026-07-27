@@ -65,8 +65,8 @@ export const useAdminStore = defineStore('admin', () => {
     return data;
   };
 
-  const fetchReporteConductores = async () => {
-    const { data } = await api.get('/admin/reportes/conductores');
+  const fetchReporteConductores = async (params = {}) => {
+    const { data } = await api.get('/admin/reportes/conductores', { params });
     return data;
   };
 
