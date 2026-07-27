@@ -2,7 +2,10 @@
   <div class="public-home">
     <header class="header">
       <img src="/logo.png" alt="RuralGo" class="logo" />
-      <h1>RuralGo</h1>
+      <div class="brand">
+        <h1>RuralGo</h1>
+        <span class="tagline">Transporte seguro</span>
+      </div>
       <span v-if="autoCount > 0" class="refresh-badge">Buscando<span class="dots">{{ dots }}</span></span>
     </header>
 
@@ -197,12 +200,28 @@ onUnmounted(() => {
 
 <style scoped>
 .public-home { display: flex; flex-direction: column; height: 100vh; }
-.header { background: #2ecc71; padding: 12px 20px; display: flex; align-items: center; gap: 10px; color: white; }
-.header .logo { height: 36px; }
-.header h1 { font-size: 20px; font-weight: 700; flex: 1; }
+.header {
+  background: rgba(46, 204, 113, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  position: relative;
+  z-index: 10;
+}
+.logo { height: 40px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15)); }
+.brand { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+.brand h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+.tagline { font-size: 11px; font-weight: 500; opacity: 0.85; letter-spacing: 0.3px; }
 .refresh-badge {
-  background: rgba(255,255,255,0.25); padding: 2px 10px; border-radius: 12px;
+  background: rgba(255,255,255,0.2); backdrop-filter: blur(6px);
+  padding: 4px 12px; border-radius: 20px;
   font-size: 12px; font-weight: 600; display: inline-flex; align-items: baseline;
+  border: 1px solid rgba(255,255,255,0.15);
 }
 .dots { display: inline-block; width: 1.5em; text-align: left; }
 #map { flex: 1; border-radius: 0; z-index: 1; }
