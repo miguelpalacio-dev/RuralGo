@@ -92,6 +92,7 @@ const logout = () => {
   .close-btn { display: block; }
   .main-area { margin-left: 0; }
   .menu-toggle { display: block; }
+  .main-content { padding: 15px; }
   .overlay { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 90; }
 }
 </style>

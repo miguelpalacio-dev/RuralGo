@@ -5,40 +5,81 @@
     </div>
 
     <div class="table-responsive">
-      <table>
-        <thead>
-          <tr><th>Nombre</th><th>Cédula</th><th>Teléfono</th><th>Email</th><th>Estado</th><th>Acciones</th></tr>
-        </thead>
-        <tbody>
-          <tr v-for="c in conductores" :key="c.id">
-            <td>
-              <router-link :to="`/admin/conductores/${c.id}`" class="user-cell link">
-                <img v-if="c.usuario?.foto" :src="resolveFoto(c.usuario.foto)" class="avatar" />
-                <div v-else class="avatar avatar-text">{{ c.usuario?.nombre?.charAt(0) }}</div>
-                {{ c.usuario?.nombre }}
-              </router-link>
-            </td>
-            <td>{{ c.usuario?.cedula }}</td>
-            <td>{{ c.usuario?.telefono }}</td>
-            <td>{{ c.usuario?.email }}</td>
-            <td>
+      <div class="table-desktop">
+        <table>
+          <thead>
+            <tr><th>Nombre</th><th>Cédula</th><th>Teléfono</th><th>Email</th><th>Estado</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            <tr v-for="c in conductores" :key="c.id">
+              <td>
+                <router-link :to="`/admin/conductores/${c.id}`" class="user-cell link">
+                  <img v-if="c.usuario?.foto" :src="resolveFoto(c.usuario.foto)" class="avatar" />
+                  <div v-else class="avatar avatar-text">{{ c.usuario?.nombre?.charAt(0) }}</div>
+                  {{ c.usuario?.nombre }}
+                </router-link>
+              </td>
+              <td>{{ c.usuario?.cedula }}</td>
+              <td>{{ c.usuario?.telefono }}</td>
+              <td>{{ c.usuario?.email }}</td>
+              <td>
+                <span class="badge" :class="c.usuario?.activo ? 'badge-success' : 'badge-danger'">
+                  {{ c.usuario?.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="acciones">
+                <router-link :to="`/admin/conductores/${c.id}`" class="btn btn-sm btn-outline">Ver</router-link>
+                <button @click="editar(c)" class="btn btn-sm btn-outline">Editar</button>
+                <button @click="confirmToggle(c)" class="btn btn-sm" :class="c.usuario?.activo ? 'btn-danger' : 'btn-primary'">
+                  {{ c.usuario?.activo ? 'Inhabilitar' : 'Activar' }}
+                </button>
+              </td>
+            </tr>
+            <tr v-if="conductores.length === 0">
+              <td colspan="6" class="empty-row">No hay conductores registrados</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mobile-cards">
+        <div v-for="c in conductores" :key="'card-' + c.id" class="mobile-card">
+          <div class="mobile-card-header">
+            <img v-if="c.usuario?.foto" :src="resolveFoto(c.usuario.foto)" class="avatar" />
+            <div v-else class="avatar avatar-text">{{ c.usuario?.nombre?.charAt(0) }}</div>
+            <div>
+              <router-link :to="`/admin/conductores/${c.id}`" class="mobile-card-title link">{{ c.usuario?.nombre }}</router-link>
+              <div class="mobile-card-subtitle">{{ c.usuario?.cedula }}</div>
+            </div>
+          </div>
+          <div class="mobile-card-body">
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">📱 Teléfono</span>
+              <span class="mobile-card-value">{{ c.usuario?.telefono || '—' }}</span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">📧 Email</span>
+              <span class="mobile-card-value">{{ c.usuario?.email }}</span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Estado</span>
               <span class="badge" :class="c.usuario?.activo ? 'badge-success' : 'badge-danger'">
                 {{ c.usuario?.activo ? 'Activo' : 'Inactivo' }}
               </span>
-            </td>
-            <td class="acciones">
-              <router-link :to="`/admin/conductores/${c.id}`" class="btn btn-sm btn-outline">Ver</router-link>
-              <button @click="editar(c)" class="btn btn-sm btn-outline">Editar</button>
-              <button @click="confirmToggle(c)" class="btn btn-sm" :class="c.usuario?.activo ? 'btn-danger' : 'btn-primary'">
-                {{ c.usuario?.activo ? 'Inhabilitar' : 'Activar' }}
-              </button>
-            </td>
-          </tr>
-          <tr v-if="conductores.length === 0">
-            <td colspan="6" class="empty-row">No hay conductores registrados</td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+          <div class="mobile-card-actions">
+            <router-link :to="`/admin/conductores/${c.id}`" class="btn btn-sm btn-outline">Ver</router-link>
+            <button @click="editar(c)" class="btn btn-sm btn-outline">Editar</button>
+            <button @click="confirmToggle(c)" class="btn btn-sm" :class="c.usuario?.activo ? 'btn-danger' : 'btn-primary'">
+              {{ c.usuario?.activo ? 'Inhabilitar' : 'Activar' }}
+            </button>
+          </div>
+        </div>
+        <div v-if="conductores.length === 0" class="mobile-card">
+          <div class="empty-row">No hay conductores registrados</div>
+        </div>
+      </div>
     </div>
 
     <div v-if="showForm" class="modal-overlay" @click.self="cerrarForm">

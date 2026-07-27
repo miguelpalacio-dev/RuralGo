@@ -5,40 +5,81 @@
     </div>
 
     <div class="table-responsive">
-      <table>
-        <thead>
-          <tr><th>Placa</th><th>Marca / Modelo</th><th>Color</th><th>Conductor</th><th>SOAT</th><th>Licencia</th><th>Estado</th><th>Acciones</th></tr>
-        </thead>
-        <tbody>
-          <tr v-for="v in vehiculos" :key="v.id">
-            <td><strong>{{ v.placa }}</strong></td>
-            <td>{{ v.marca }} {{ v.modelo }}</td>
-            <td>{{ v.color }}</td>
-            <td>{{ v.conductor?.usuario?.nombre }}</td>
-            <td>
+      <div class="table-desktop">
+        <table>
+          <thead>
+            <tr><th>Placa</th><th>Marca / Modelo</th><th>Color</th><th>Conductor</th><th>SOAT</th><th>Licencia</th><th>Estado</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            <tr v-for="v in vehiculos" :key="v.id">
+              <td><strong>{{ v.placa }}</strong></td>
+              <td>{{ v.marca }} {{ v.modelo }}</td>
+              <td>{{ v.color }}</td>
+              <td>{{ v.conductor?.usuario?.nombre }}</td>
+              <td>
+                <button class="badge-toggle" :class="v.soat_verificado ? 'badge-success' : 'badge-danger'" @click="toggleVerificacion(v, 'soat')">
+                  {{ v.soat_verificado ? '✓ Verificado' : '✗ No verificado' }}
+                </button>
+              </td>
+              <td>
+                <button class="badge-toggle" :class="v.licencia_verificada ? 'badge-success' : 'badge-danger'" @click="toggleVerificacion(v, 'licencia')">
+                  {{ v.licencia_verificada ? '✓ Verificada' : '✗ No verificada' }}
+                </button>
+              </td>
+              <td>
+                <span class="badge" :class="v.activo ? 'badge-success' : 'badge-danger'">
+                  {{ v.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <button @click="editar(v)" class="btn btn-sm btn-outline">Editar</button>
+              </td>
+            </tr>
+            <tr v-if="vehiculos.length === 0">
+              <td colspan="8" class="empty-row">No hay vehículos registrados</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mobile-cards">
+        <div v-for="v in vehiculos" :key="'card-' + v.id" class="mobile-card">
+          <div class="mobile-card-header">
+            <div class="mobile-card-title">{{ v.placa }}</div>
+            <div class="mobile-card-subtitle">{{ v.marca }} {{ v.modelo }} · {{ v.color }}</div>
+          </div>
+          <div class="mobile-card-body">
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">👤 Conductor</span>
+              <span class="mobile-card-value">{{ v.conductor?.usuario?.nombre }}</span>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">📄 SOAT</span>
               <button class="badge-toggle" :class="v.soat_verificado ? 'badge-success' : 'badge-danger'" @click="toggleVerificacion(v, 'soat')">
                 {{ v.soat_verificado ? '✓ Verificado' : '✗ No verificado' }}
               </button>
-            </td>
-            <td>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">🪪 Licencia</span>
               <button class="badge-toggle" :class="v.licencia_verificada ? 'badge-success' : 'badge-danger'" @click="toggleVerificacion(v, 'licencia')">
                 {{ v.licencia_verificada ? '✓ Verificada' : '✗ No verificada' }}
               </button>
-            </td>
-            <td>
+            </div>
+            <div class="mobile-card-row">
+              <span class="mobile-card-label">Estado</span>
               <span class="badge" :class="v.activo ? 'badge-success' : 'badge-danger'">
                 {{ v.activo ? 'Activo' : 'Inactivo' }}
               </span>
-            </td>
-            <td>
-              <button @click="editar(v)" class="btn btn-sm btn-outline">Editar</button>
-            </td>
-          </tr>
-          <tr v-if="vehiculos.length === 0">
-            <td colspan="8" class="empty-row">No hay vehículos registrados</td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+          <div class="mobile-card-actions">
+            <button @click="editar(v)" class="btn btn-sm btn-outline">Editar</button>
+          </div>
+        </div>
+        <div v-if="vehiculos.length === 0" class="mobile-card">
+          <div class="empty-row">No hay vehículos registrados</div>
+        </div>
+      </div>
     </div>
 
     <div v-if="showForm" class="modal-overlay" @click.self="cerrarForm">

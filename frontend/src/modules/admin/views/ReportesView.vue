@@ -55,50 +55,118 @@
       </div>
 
       <div v-if="reporteConductores.length > 0" class="chart-legend" style="margin-top:20px">
-        <table>
-          <thead><tr><th>Nombre</th><th>Cédula</th><th>Total</th><th>Completados</th><th>Ingresos</th></tr></thead>
-          <tbody>
-            <tr v-for="r in reporteConductores" :key="r.conductor_id">
-              <td>{{ r.nombre }}</td>
-              <td>{{ r.cedula }}</td>
-              <td>{{ r.total_servicios }}</td>
-              <td>{{ r.servicios_completados }}</td>
-              <td><strong>${{ r.ingresos_totales.toLocaleString() }}</strong></td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-desktop">
+          <table>
+            <thead><tr><th>Nombre</th><th>Cédula</th><th>Total</th><th>Completados</th><th>Ingresos</th></tr></thead>
+            <tbody>
+              <tr v-for="r in reporteConductores" :key="r.conductor_id">
+                <td>{{ r.nombre }}</td>
+                <td>{{ r.cedula }}</td>
+                <td>{{ r.total_servicios }}</td>
+                <td>{{ r.servicios_completados }}</td>
+                <td><strong>${{ r.ingresos_totales.toLocaleString() }}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mobile-cards">
+          <div v-for="r in reporteConductores" :key="'card-' + r.conductor_id" class="mobile-card">
+            <div class="mobile-card-header">
+              <div class="mobile-card-title">{{ r.nombre }}</div>
+              <div class="mobile-card-subtitle">{{ r.cedula }}</div>
+            </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Total servicios</span>
+                <span class="mobile-card-value">{{ r.total_servicios }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Completados</span>
+                <span class="mobile-card-value">{{ r.servicios_completados }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">Ingresos</span>
+                <span class="mobile-card-value"><strong>${{ r.ingresos_totales.toLocaleString() }}</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <div v-if="tipoReporte === 'servicios'" class="table-responsive">
       <div class="card">
         <h4 style="margin-bottom: 15px">🚗 Servicios Registrados</h4>
-        <table>
-          <thead>
-            <tr><th>Fecha</th><th>Conductor</th><th>Placa</th><th>Tipo</th><th>Origen</th><th>Destino</th><th>Precio</th><th>Estado</th></tr>
-          </thead>
-          <tbody>
-            <tr v-for="s in servicios" :key="s.id">
-              <td>{{ formatDate(s.hora_inicio) }}</td>
-              <td>{{ s.vehiculo?.conductor?.usuario?.nombre }}</td>
-              <td>{{ s.vehiculo?.placa }}</td>
-              <td>{{ s.tipoServicio?.nombre }}</td>
-              <td>{{ s.origen_nombre }}</td>
-              <td>{{ s.destino_texto }}</td>
-              <td><strong>${{ Number(s.precio).toLocaleString('es-CO') }}</strong></td>
-              <td>
-                <span class="badge" :class="{
-                  'badge-success': s.estado === 'finalizado',
-                  'badge-danger': s.estado === 'cancelado',
-                  'badge-warning': s.estado === 'en_curso',
-                }">{{ s.estado }}</span>
-              </td>
-            </tr>
-            <tr v-if="servicios.length === 0">
-              <td colspan="8" class="empty-row">No hay servicios para los filtros seleccionados</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-desktop">
+          <table>
+            <thead>
+              <tr><th>Fecha</th><th>Conductor</th><th>Placa</th><th>Tipo</th><th>Origen</th><th>Destino</th><th>Precio</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+              <tr v-for="s in servicios" :key="s.id">
+                <td>{{ formatDate(s.hora_inicio) }}</td>
+                <td>{{ s.vehiculo?.conductor?.usuario?.nombre }}</td>
+                <td>{{ s.vehiculo?.placa }}</td>
+                <td>{{ s.tipoServicio?.nombre }}</td>
+                <td>{{ s.origen_nombre }}</td>
+                <td>{{ s.destino_texto }}</td>
+                <td><strong>${{ Number(s.precio).toLocaleString('es-CO') }}</strong></td>
+                <td>
+                  <span class="badge" :class="{
+                    'badge-success': s.estado === 'finalizado',
+                    'badge-danger': s.estado === 'cancelado',
+                    'badge-warning': s.estado === 'en_curso',
+                  }">{{ s.estado }}</span>
+                </td>
+              </tr>
+              <tr v-if="servicios.length === 0">
+                <td colspan="8" class="empty-row">No hay servicios para los filtros seleccionados</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mobile-cards">
+          <div v-for="s in servicios" :key="'card-' + s.id" class="mobile-card">
+            <div class="mobile-card-header">
+              <div>
+                <div class="mobile-card-title">{{ formatDate(s.hora_inicio) }}</div>
+                <div class="mobile-card-subtitle">{{ s.tipoServicio?.nombre }}</div>
+              </div>
+              <span class="badge" :class="{
+                'badge-success': s.estado === 'finalizado',
+                'badge-danger': s.estado === 'cancelado',
+                'badge-warning': s.estado === 'en_curso',
+              }">{{ s.estado }}</span>
+            </div>
+            <div class="mobile-card-body">
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">👤 Conductor</span>
+                <span class="mobile-card-value">{{ s.vehiculo?.conductor?.usuario?.nombre }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">🏍️ Placa</span>
+                <span class="mobile-card-value">{{ s.vehiculo?.placa }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">📍 Origen</span>
+                <span class="mobile-card-value">{{ s.origen_nombre }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">🏁 Destino</span>
+                <span class="mobile-card-value">{{ s.destino_texto }}</span>
+              </div>
+              <div class="mobile-card-row">
+                <span class="mobile-card-label">💰 Precio</span>
+                <span class="mobile-card-value"><strong>${{ Number(s.precio).toLocaleString('es-CO') }}</strong></span>
+              </div>
+            </div>
+          </div>
+          <div v-if="servicios.length === 0" class="mobile-card">
+            <div class="empty-row">No hay servicios para los filtros seleccionados</div>
+          </div>
+        </div>
       </div>
     </div>
   </AdminLayout>
