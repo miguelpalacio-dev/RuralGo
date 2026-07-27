@@ -5,7 +5,7 @@
         <img src="/logo.png" alt="RuralGo" class="logo-header" />
       </router-link>
       <h2>{{ titulo }}</h2>
-      <button @click="logout" class="btn btn-outline-white btn-sm">Salir</button>
+      <button @click="intentarLogout" class="btn btn-outline-white btn-sm">Salir</button>
     </header>
     <main class="main-content">
       <slot />
@@ -32,22 +32,56 @@
         <span>Perfil</span>
       </router-link>
     </nav>
+
+    <ConfirmDialog
+      :show="showLogoutConfirm"
+      titulo="Servicio en curso"
+      mensaje="Tienes un servicio activo. Si cierras sesión, el servicio se cancelará automáticamente. ¿Estás seguro?"
+      type="danger"
+      texto-confirmar="Cerrar sesión"
+      @confirm="ejecutarLogout"
+      @cancel="showLogoutConfirm = false"
+    />
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import { useConductorStore } from '../stores/conductor';
+import ConfirmDialog from '../components/ConfirmDialog.vue';
 
 defineProps({ titulo: { type: String, default: 'Conductor' } });
 
 const auth = useAuthStore();
+const conductorStore = useConductorStore();
 const router = useRouter();
+const showLogoutConfirm = ref(false);
 
-const logout = () => {
+const intentarLogout = async () => {
+  const servicio = conductorStore.servicioActivo;
+  if (servicio) {
+    showLogoutConfirm.value = true;
+  } else {
+    auth.logout();
+    router.push('/conductor/login');
+  }
+};
+
+const ejecutarLogout = async () => {
+  try {
+    await conductorStore.cancelarServicioActivo();
+  } catch (e) { console.error(e); }
   auth.logout();
   router.push('/conductor/login');
 };
+
+onMounted(async () => {
+  try {
+    await conductorStore.fetchServicioActivo();
+  } catch (e) { console.error(e); }
+});
 </script>
 
 <style scoped>

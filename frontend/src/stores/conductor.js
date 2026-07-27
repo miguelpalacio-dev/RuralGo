@@ -65,6 +65,17 @@ export const useConductorStore = defineStore('conductor', () => {
     return data;
   };
 
+  const fetchServicioActivo = async () => {
+    const { data } = await api.get('/conductor/servicio-activo');
+    servicioActivo.value = data;
+    return data;
+  };
+
+  const cancelarServicioActivo = async () => {
+    await api.put('/conductor/servicio-activo/cancelar');
+    servicioActivo.value = null;
+  };
+
   const fetchPerfil = async () => {
     const { data } = await api.get('/profile');
     perfil.value = data;
@@ -87,5 +98,6 @@ export const useConductorStore = defineStore('conductor', () => {
     fetchMisVehiculos, seleccionarVehiculo, fetchTiposServicio,
     crearServicio, finalizarServicio, cancelarServicio, fetchHistorial,
     fetchPerfil, updatePerfil, changePassword,
+    fetchServicioActivo, cancelarServicioActivo,
   };
 });

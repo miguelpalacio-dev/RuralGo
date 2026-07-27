@@ -10,6 +10,8 @@ const {
   finalizarServicio,
   cancelarServicio,
   getHistorial,
+  getServicioActivo,
+  cancelarServicioActivo,
 } = require('../controllers/conductorController');
 const { authMiddleware, roleMiddleware } = require('../middleware/auth');
 
@@ -186,5 +188,9 @@ router.put('/servicios/:id/cancelar', cancelarServicio);
  *         description: Lista de servicios
  */
 router.get('/historial', getHistorial);
+
+router.get('/servicio-activo', getServicioActivo);
+
+router.put('/servicio-activo/cancelar', cancelarServicioActivo);
 
 module.exports = router;

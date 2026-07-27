@@ -214,6 +214,49 @@ const getHistorial = async (req, res) => {
   }
 };
 
+const getServicioActivo = async (req, res) => {
+  try {
+    const conductor = await Conductor.findOne({ where: { usuario_id: req.usuario.id } });
+    if (!conductor) return res.status(404).json({ message: 'Conductor no encontrado' });
+
+    const vehiculos = await Vehiculo.findAll({ where: { conductor_id: conductor.id } });
+    const vehiculoIds = vehiculos.map((v) => v.id);
+
+    const servicio = await Servicio.findOne({
+      where: { vehiculo_id: { [Op.in]: vehiculoIds }, estado: 'en_curso' },
+      include: [
+        { model: TipoServicio, as: 'tipoServicio' },
+        { model: Vehiculo, as: 'vehiculo' },
+      ],
+    });
+
+    res.json(servicio || null);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
+};
+
+const cancelarServicioActivo = async (req, res) => {
+  try {
+    const conductor = await Conductor.findOne({ where: { usuario_id: req.usuario.id } });
+    if (!conductor) return res.status(404).json({ message: 'Conductor no encontrado' });
+
+    const vehiculos = await Vehiculo.findAll({ where: { conductor_id: conductor.id } });
+    const vehiculoIds = vehiculos.map((v) => v.id);
+
+    await Servicio.update(
+      { estado: 'cancelado', hora_fin: new Date() },
+      { where: { vehiculo_id: { [Op.in]: vehiculoIds }, estado: 'en_curso' } }
+    );
+
+    res.json({ message: 'Servicio activo cancelado' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error del servidor' });
+  }
+};
+
 module.exports = {
   getMiConductor,
   toggleDisponibilidad,
@@ -224,4 +267,6 @@ module.exports = {
   finalizarServicio,
   cancelarServicio,
   getHistorial,
+  getServicioActivo,
+  cancelarServicioActivo,
 };
