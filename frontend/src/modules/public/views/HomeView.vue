@@ -3,14 +3,18 @@
     <header class="header">
       <img src="/logo.png" alt="RuralGo" class="logo" />
       <h1>RuralGo</h1>
+      <span v-if="autoCount > 0" class="refresh-badge">{{ refreshCount }}/4</span>
     </header>
 
     <div id="map" ref="mapContainer"></div>
 
+    <button v-if="!autoCount && !loading" class="refresh-btn" @click="manualRefresh">🔄 Actualizar mapa</button>
+
     <div v-if="conductorSeleccionado" class="conductor-card card">
       <button class="close-card" @click="conductorSeleccionado = null">✕</button>
       <div class="card-header">
-        <div class="conductor-avatar">{{ conductorSeleccionado.usuario.nombre.charAt(0) }}</div>
+        <img v-if="conductorSeleccionado.usuario.foto" :src="resolveFoto(conductorSeleccionado.usuario.foto)" class="conductor-photo" />
+        <div v-else class="conductor-avatar">{{ conductorSeleccionado.usuario.nombre.charAt(0) }}</div>
         <div>
           <h3>{{ conductorSeleccionado.usuario.nombre }}</h3>
           <span class="badge badge-success">Disponible</span>
@@ -39,13 +43,28 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import api from '../../../services/api';
 
+const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000';
+
+const resolveFoto = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return API_BASE + url;
+};
+
 const mapContainer = ref(null);
 const conductorSeleccionado = ref(null);
+const refreshCount = ref(0);
+const autoCount = ref(0);
+const loading = ref(false);
+let map = null;
+let conductorLayer = null;
+let refreshTimer = null;
+let autoTimer = null;
 
 const motoIcon = L.divIcon({
   html: `<div style="
@@ -68,8 +87,64 @@ const userIcon = L.divIcon({
   iconAnchor: [16, 32],
 });
 
+const loadConductores = async () => {
+  if (!map) return;
+  loading.value = true;
+  try {
+    const { data } = await api.get('/disponibles');
+    if (conductorLayer) map.removeLayer(conductorLayer);
+    conductorLayer = L.layerGroup().addTo(map);
+    data.forEach((c) => {
+      const marker = L.marker([c.ubicacion.latitud, c.ubicacion.longitud], { icon: motoIcon })
+        .bindPopup(`<strong>${c.usuario.nombre}</strong><br>${c.vehiculo?.placa || ''}`);
+      marker.on('click', () => {
+        conductorSeleccionado.value = c;
+        map.panTo([c.ubicacion.latitud, c.ubicacion.longitud]);
+      });
+      conductorLayer.addLayer(marker);
+    });
+  } catch (e) {
+    console.error('Error cargando conductores:', e);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const startAutoRefresh = () => {
+  clearAutoRefresh();
+  refreshCount.value = 0;
+  autoCount.value = 4;
+  loadConductores();
+  autoTimer = setInterval(() => {
+    refreshCount.value++;
+    autoCount.value = 4 - refreshCount.value;
+    loadConductores();
+    if (refreshCount.value >= 4) clearAutoRefresh();
+  }, 15000);
+};
+
+const clearAutoRefresh = () => {
+  clearInterval(autoTimer);
+  autoTimer = null;
+  autoCount.value = 0;
+  refreshCount.value = 0;
+};
+
+const manualRefresh = () => {
+  loadConductores();
+  startAutoRefresh();
+};
+
+const onVisibilityChange = () => {
+  if (document.hidden) {
+    clearAutoRefresh();
+  } else if (!autoTimer) {
+    startAutoRefresh();
+  }
+};
+
 onMounted(async () => {
-  const map = L.map(mapContainer.value, { zoomControl: false }).setView([6.2442, -75.5812], 13);
+  map = L.map(mapContainer.value, { zoomControl: false }).setView([6.2442, -75.5812], 13);
 
   L.control.zoom({ position: 'topright' }).addTo(map);
 
@@ -90,20 +165,13 @@ onMounted(async () => {
     );
   }
 
-  try {
-    const { data } = await api.get('/disponibles');
-    data.forEach((c) => {
-      const marker = L.marker([c.ubicacion.latitud, c.ubicacion.longitud], { icon: motoIcon })
-        .addTo(map)
-        .bindPopup(`<strong>${c.usuario.nombre}</strong><br>${c.vehiculo?.placa || ''}`);
-      marker.on('click', () => {
-        conductorSeleccionado.value = c;
-        map.panTo([c.ubicacion.latitud, c.ubicacion.longitud]);
-      });
-    });
-  } catch (e) {
-    console.error('Error cargando conductores:', e);
-  }
+  document.addEventListener('visibilitychange', onVisibilityChange);
+  startAutoRefresh();
+});
+
+onUnmounted(() => {
+  clearAutoRefresh();
+  document.removeEventListener('visibilitychange', onVisibilityChange);
 });
 </script>
 
@@ -111,8 +179,20 @@ onMounted(async () => {
 .public-home { display: flex; flex-direction: column; height: 100vh; }
 .header { background: #2ecc71; padding: 12px 20px; display: flex; align-items: center; gap: 10px; color: white; }
 .header .logo { height: 36px; }
-.header h1 { font-size: 20px; font-weight: 700; }
+.header h1 { font-size: 20px; font-weight: 700; flex: 1; }
+.refresh-badge {
+  background: rgba(255,255,255,0.25); padding: 2px 10px; border-radius: 12px;
+  font-size: 12px; font-weight: 600;
+}
 #map { flex: 1; border-radius: 0; z-index: 1; }
+
+.refresh-btn {
+  position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+  background: white; border: none; padding: 8px 20px; border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-size: 14px; font-weight: 600;
+  color: #2ecc71; cursor: pointer; z-index: 1000; transition: transform 0.15s;
+}
+.refresh-btn:hover { transform: translateX(-50%) scale(1.05); }
 
 .conductor-card {
   position: fixed; bottom: 55px; left: 50%; transform: translateX(-50%);
@@ -122,6 +202,7 @@ onMounted(async () => {
 @keyframes slideUp { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
 .close-card { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 18px; cursor: pointer; color: #999; }
 .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+.conductor-photo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #2ecc71; }
 .conductor-avatar { width: 48px; height: 48px; border-radius: 50%; background: #2ecc71; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 700; }
 .card-header h3 { margin-bottom: 3px; font-size: 16px; }
 .info-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; color: #555; }

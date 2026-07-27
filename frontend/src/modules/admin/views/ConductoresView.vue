@@ -13,7 +13,8 @@
           <tr v-for="c in conductores" :key="c.id">
             <td>
               <router-link :to="`/admin/conductores/${c.id}`" class="user-cell link">
-                <div class="avatar">{{ c.usuario?.nombre?.charAt(0) }}</div>
+                <img v-if="c.usuario?.foto" :src="resolveFoto(c.usuario.foto)" class="avatar" />
+                <div v-else class="avatar avatar-text">{{ c.usuario?.nombre?.charAt(0) }}</div>
                 {{ c.usuario?.nombre }}
               </router-link>
             </td>
@@ -82,6 +83,12 @@ import AdminLayout from '../../../layouts/AdminLayout.vue';
 import ConfirmDialog from '../../../components/ConfirmDialog.vue';
 import { useAdminStore } from '../../../stores/admin';
 
+const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000';
+const resolveFoto = (url) => {
+  if (!url) return '';
+  return url.startsWith('http') ? url : API_BASE + url;
+};
+
 const adminStore = useAdminStore();
 const conductores = ref([]);
 const showForm = ref(false);
@@ -142,7 +149,8 @@ onMounted(async () => { conductores.value = await adminStore.fetchConductores();
 .user-cell { display: flex; align-items: center; gap: 10px; }
 .link { text-decoration: none; color: inherit; }
 .link:hover { color: #2ecc71; }
-.avatar { width: 32px; height: 32px; border-radius: 50%; background: #2ecc71; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #2ecc71; }
+.avatar-text { background: #2ecc71; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
 .acciones { display: flex; gap: 6px; flex-wrap: wrap; }
 .btn-sm { padding: 5px 10px; font-size: 12px; }
 .empty-row { text-align: center; color: #95a5a6; padding: 30px !important; }
