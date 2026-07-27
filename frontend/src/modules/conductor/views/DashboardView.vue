@@ -11,7 +11,7 @@
       <div class="servicio-detalle">
         <p v-if="servicioActivo.tipoServicio"><strong>Tipo:</strong> {{ servicioActivo.tipoServicio.nombre }}</p>
         <p v-if="servicioActivo.destino_texto"><strong>Destino:</strong> {{ servicioActivo.destino_texto }}</p>
-        <p v-if="servicioActivo.precio"><strong>Precio:</strong> ${{ servicioActivo.precio }}</p>
+        <p v-if="servicioActivo.precio"><strong>Precio:</strong> {{ formatPrecio(servicioActivo.precio) }}</p>
       </div>
       <div class="servicio-actions">
         <button @click="finalizar" class="btn btn-primary" style="flex:1">✅ Finalizar</button>
@@ -107,6 +107,11 @@ const formatTime = (dateStr) => {
   if (!dateStr) return '';
   const d = new Date(dateStr);
   return d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+};
+
+const formatPrecio = (v) => {
+  if (!v) return '$0';
+  return '$' + Number(v).toLocaleString('es-CO');
 };
 
 const startUbicacion = () => {
