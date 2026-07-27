@@ -65,7 +65,7 @@
               <tr v-for="s in historial" :key="s.id">
                 <td>{{ formatDate(s.hora_inicio) }}</td>
                 <td>{{ s.destino_texto }}</td>
-                <td><strong>${{ s.precio }}</strong></td>
+                <td><strong>${{ Number(s.precio).toLocaleString('es-CO') }}</strong></td>
                 <td>
                   <span class="badge" :class="{
                     'badge-success': s.estado === 'finalizado',

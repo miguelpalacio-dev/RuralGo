@@ -36,7 +36,7 @@
         </div>
       </div>
       <div class="servicio-footer">
-        <span class="precio">${{ s.precio }}</span>
+        <span class="precio">${{ Number(s.precio).toLocaleString('es-CO') }}</span>
         <span class="tipo">{{ s.tipoServicio?.nombre }}</span>
       </div>
       <div v-if="expanded === s.id" class="servicio-detail">

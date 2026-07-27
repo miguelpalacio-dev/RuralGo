@@ -105,7 +105,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import AdminLayout from '../../../layouts/AdminLayout.vue';
 import { useAdminStore } from '../../../stores/admin';
 
@@ -116,6 +116,8 @@ const fechaFin = ref('');
 const servicios = ref([]);
 const ingresos = ref(null);
 const reporteConductores = ref([]);
+
+onMounted(() => { buscar(); });
 
 const formatDate = (d) => new Date(d).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' });
 
