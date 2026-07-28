@@ -30,15 +30,9 @@ Documentacion detallada de cada modulo, vista, formulario y funcionalidad de la 
 
 ### Home - Mapa de Conductores Disponibles
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/` |
-| **Layout** | Ninguno (full-screen) |
-| **Archivo** | `modules/public/views/HomeView.vue` |
+**Ruta:** `/` | **Layout:** Ninguno (full-screen) | **Archivo:** `modules/public/views/HomeView.vue`
 
-#### Descripcion
-
-Pagina publica que muestra un mapa interactivo (Leaflet/OpenStreetMap) centrado en la ubicacion del usuario. Los conductores disponibles aparecen como marcadores de moto en el mapa. El publico puede seleccionar un conductor para ver sus datos y contactarlo.
+Pagina publica que muestra un mapa interactivo con conductores de transporte rural disponibles en tiempo real. El usuario puede geolocalizarse, ver marcadores de motos, seleccionar un conductor y contactarlo directamente por llamada o WhatsApp.
 
 #### Funcionalidades
 
@@ -64,19 +58,14 @@ Pagina publica que muestra un mapa interactivo (Leaflet/OpenStreetMap) centrado 
 
 ### 1. Login Admin
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/admin/login` |
-| **Layout** | Ninguno (card centrada) |
-| **Archivo** | `modules/admin/views/LoginView.vue` |
-| **Subtitulo visible** | Panel Administracion |
+**Ruta:** `/admin/login` | **Layout:** Ninguno (card centrada) | **Archivo:** `modules/admin/views/LoginView.vue`
+
+Formulario de autenticacion para administradores con acceso al panel de gestion. Muestra una card centrada sobre fondo gris con el subtitulo "Panel Administracion". Valida credenciales contra el backend y redirige al dashboard en caso de exito.
 
 #### Formulario de Login
 
-| Campo | Tipo | Requerido | Placeholder |
-|---|---|---|---|
-| Email | email | Si | admin@ruralgo.com |
-| Contrasena | password | Si | --- |
+- **Email** - tipo: email, requerido, placeholder: admin@ruralgo.com
+- **Contrasena** - tipo: password, requerido
 
 #### Funcionalidades
 
@@ -88,25 +77,16 @@ Pagina publica que muestra un mapa interactivo (Leaflet/OpenStreetMap) centrado 
 
 ### 2. Dashboard Admin
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/admin/dashboard` |
-| **Layout** | AdminLayout |
-| **Titulo** | Dashboard |
-| **Archivo** | `modules/admin/views/DashboardView.vue` |
+**Ruta:** `/admin/dashboard` | **Layout:** AdminLayout | **Archivo:** `modules/admin/views/DashboardView.vue`
 
-#### Descripcion
-
-Panel principal con estadisticas generales, graficos y resumen de actividad reciente.
+Panel principal del administrador que muestra estadisticas generales, graficos de actividad y resumen financiero. Carga datos en paralelo al montar la vista para ofrecer una vision completa del estado actual del servicio de transporte.
 
 #### Tarjetas de Estadisticas (grid 4 columnas)
 
-| Tarjeta | Icono | Dato mostrado |
-|---|---|---|
-| Conductores | personas | Total de conductores registrados |
-| Disponibles | circulo verde | Conductores disponibles ahora |
-| Servicios Hoy | auto | Servicios realizados hoy |
-| Servicios Mes | calendario | Servicios del mes actual |
+- **Conductores** - icono personas, total de conductores registrados
+- **Disponibles** - icono circulo verde, conductores disponibles ahora
+- **Servicios Hoy** - icono auto, servicios realizados hoy
+- **Servicios Mes** - icono calendario, servicios del mes actual
 
 #### Secciones
 
@@ -125,27 +105,18 @@ Panel principal con estadisticas generales, graficos y resumen de actividad reci
 
 ### 3. Gestion de Conductores
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/admin/conductores` |
-| **Layout** | AdminLayout |
-| **Titulo** | Gestion de Conductores |
-| **Archivo** | `modules/admin/views/ConductoresView.vue` |
+**Ruta:** `/admin/conductores` | **Layout:** AdminLayout | **Archivo:** `modules/admin/views/ConductoresView.vue`
 
-#### Descripcion
-
-Vista completa para administrar conductores: listar, registrar, editar, ver detalle y cambiar estado.
+Vista completa para administrar el registro de conductores del servicio. Permite listar todos los conductores, registrar nuevos, editar información existente, ver el detalle completo y cambiar el estado de activacion de cada uno con confirmacion.
 
 #### Tabla Desktop / Tarjetas Mobile
 
-| Columna | Contenido |
-|---|---|
-| Nombre | Avatar/foto + nombre (link al detalle) |
-| Cedula | Numero de cedula |
-| Telefono | Numero de contacto |
-| Email | Correo electronico |
-| Estado | Badge "Activo" (verde) / "Inactivo" (rojo) |
-| Acciones | Ver, Editar, Inhabilitar/Activar |
+- **Nombre** - avatar/foto + nombre (link al detalle)
+- **Cedula** - numero de cedula
+- **Telefono** - numero de contacto
+- **Email** - correo electronico
+- **Estado** - badge "Activo" (verde) / "Inactivo" (rojo)
+- **Acciones** - Ver, Editar, Inhabilitar/Activar
 
 #### Botones de Accion por Fila
 
@@ -155,13 +126,11 @@ Vista completa para administrar conductores: listar, registrar, editar, ver deta
 
 #### Formulario: Registrar / Editar Conductor (Modal)
 
-| Campo | Tipo | Requerido | Deshabilitado al editar |
-|---|---|---|---|
-| Nombre | text | Si | No |
-| Cedula | text | Si | Si (bloqueado) |
-| Telefono | text | No | No |
-| Email | email | Si | No |
-| Contrasena | password | Si (solo al crear) | Si (solo al crear, min 6 chars) |
+- **Nombre** - tipo: text, requerido
+- **Cedula** - tipo: text, requerido, deshabilitado al editar
+- **Telefono** - tipo: text, opcional
+- **Email** - tipo: email, requerido
+- **Contrasena** - tipo: password, requerido solo al crear (min 6 caracteres)
 
 - Botones: "Cancelar" (outline) + "Guardar"/"Actualizar" (primario)
 - Cierra al hacer click afuera del modal
@@ -175,44 +144,35 @@ Vista completa para administrar conductores: listar, registrar, editar, ver deta
 
 ### 4. Detalle de Conductor
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/admin/conductores/:id` |
-| **Layout** | AdminLayout |
-| **Titulo** | Conductor: [nombre] |
-| **Archivo** | `modules/admin/views/ConductorDetailView.vue` |
+**Ruta:** `/admin/conductores/:id` | **Layout:** AdminLayout | **Archivo:** `modules/admin/views/ConductorDetailView.vue`
 
-#### Descripcion
+Vista de solo lectura que muestra la informacion completa de un conductor especifico. Incluye datos personales, ubicacion geografica en tiempo real, lista de vehiculos asignados y los ultimos servicios realizados. Permite volver a la lista de conductores.
 
-Vista de solo lectura con informacion completa de un conductor especifico, incluyendo datos personales, ubicacion, vehiculos y historial de servicios.
+#### Datos Personales
 
-#### Secciones
+- **Nombre** - nombre completo del conductor
+- **Cedula** - numero de cedula
+- **Telefono** - numero de contacto (o "N/A")
+- **Email** - correo electronico
+- **Estado** - badge Activo/Inactivo
+- **Disponible** - badge Si (verde) / No (amarillo)
 
-**Datos Personales**
-| Campo | Valor |
-|---|---|
-| Nombre | nombre del conductor |
-| Cedula | numero de cedula |
-| Telefono | numero (o "N/A") |
-| Email | correo electronico |
-| Estado | Badge Activo/Inactivo |
-| Disponible | Badge Si (verde) / No (amarillo) |
+#### Ubicacion
 
-**Ubicacion**
-| Campo | Valor |
-|---|---|
-| Latitud | coordenada lat |
-| Longitud | coordenada lng |
-| Ultima actualizacion | fecha formateada |
+- **Latitud** - coordenada de latitud
+- **Longitud** - coordenada de longitud
+- **Ultima actualizacion** - fecha formateada
 - Sin ubicacion: "Sin ubicacion registrada"
 
-**Vehiculos** (contador en titulo)
-- Lista de vehiculos con: placa (grande), marca/modelo/color
+#### Vehiculos (contador en titulo)
+
+- Lista de vehiculos con placa (grande), marca/modelo/color
 - Badges: Activo/Inactivo, SOAT verificado/no, Licencia verificada/no
 - Sin vehiculos: "Sin vehiculos registrados"
 
-**Servicios Recientes** (ultimos 10)
-- Tabla: Fecha, Destino, Precio, Estado
+#### Servicios Recientes (ultimos 10)
+
+- Tabla con columnas: Fecha, Destino, Precio, Estado
 - Badges de estado con colores
 
 #### Accion
@@ -223,29 +183,20 @@ Vista de solo lectura con informacion completa de un conductor especifico, inclu
 
 ### 5. Gestion de Vehiculos
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/admin/vehiculos` |
-| **Layout** | AdminLayout |
-| **Titulo** | Gestion de Vehiculos |
-| **Archivo** | `modules/admin/views/VehiculosView.vue` |
+**Ruta:** `/admin/vehiculos` | **Layout:** AdminLayout | **Archivo:** `modules/admin/views/VehiculosView.vue`
 
-#### Descripcion
-
-Vista para administrar vehiculos: listar, registrar, editar y verificar documentos (SOAT y licencia).
+Vista para administrar la flota de vehiculos del servicio de transporte. Permite listar, registrar y editar vehiculos, ademas de verificar los documentos (SOAT y licencia de conducir) de cada vehiculo con un sistema de toggle y confirmacion.
 
 #### Tabla Desktop / Tarjetas Mobile
 
-| Columna | Contenido |
-|---|---|
-| Placa | texto en bold |
-| Marca / Modelo | marca + modelo |
-| Color | color del vehiculo |
-| Conductor | nombre del conductor asignado |
-| SOAT | Badge toggle: "Verificado" (verde) / "No verificado" (rojo) - clickeable |
-| Licencia | Badge toggle: "Verificada" (verde) / "No verificada" (rojo) - clickeable |
-| Estado | Badge "Activo" (verde) / "Inactivo" (rojo) |
-| Acciones | Editar |
+- **Placa** - texto en bold
+- **Marca / Modelo** - marca + modelo del vehiculo
+- **Color** - color del vehiculo
+- **Conductor** - nombre del conductor asignado
+- **SOAT** - badge toggle: "Verificado" (verde) / "No verificado" (rojo) - clickeable
+- **Licencia** - badge toggle: "Verificada" (verde) / "No verificada" (rojo) - clickeable
+- **Estado** - badge "Activo" (verde) / "Inactivo" (rojo)
+- **Acciones** - Editar
 
 #### Toggle de Verificacion de Documentos
 
@@ -255,15 +206,13 @@ Vista para administrar vehiculos: listar, registrar, editar y verificar document
 
 #### Formulario: Registrar / Editar Vehiculo (Modal)
 
-| Campo | Tipo | Requerido | Deshabilitado al editar | Placeholder |
-|---|---|---|---|---|
-| Conductor | select | Si | Solo al crear | Seleccionar conductor |
-| Placa | text | Si | Si (bloqueado) | ABC123 |
-| Color | text | No | No | Negro |
-| Marca | text | Si | No | Yamaha |
-| Modelo | text | Si | No | XTZ 150 |
-| SOAT vence | date | No | No | --- |
-| Licencia vence | date | No | No | --- |
+- **Conductor** - tipo: select, requerido, solo seleccionable al crear, placeholder: "Seleccionar conductor"
+- **Placa** - tipo: text, requerido, deshabilitado al editar, placeholder: "ABC123"
+- **Color** - tipo: text, opcional, placeholder: "Negro"
+- **Marca** - tipo: text, requerido, placeholder: "Yamaha"
+- **Modelo** - tipo: text, requerido, placeholder: "XTZ 150"
+- **SOAT vence** - tipo: date, opcional
+- **Licencia vence** - tipo: date, opcional
 
 - El select de conductor carga la lista de conductores disponibles
 - Botones: "Cancelar" + "Guardar"/"Actualizar"
@@ -272,24 +221,15 @@ Vista para administrar vehiculos: listar, registrar, editar y verificar document
 
 ### 6. Reportes
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/admin/reportes` |
-| **Layout** | AdminLayout |
-| **Titulo** | Reportes |
-| **Archivo** | `modules/admin/views/ReportesView.vue` |
+**Ruta:** `/admin/reportes` | **Layout:** AdminLayout | **Archivo:** `modules/admin/views/ReportesView.vue`
 
-#### Descripcion
-
-Modulo de reportes con filtros por fecha y tipo. Tres tipos de reporte: servicios, ingresos y por conductor.
+Modulo de reportes con sistema de filtros por fecha y tipo de reporte. Ofrece tres vistas: reporte de servicios individuales, resumen de ingresos y analisis por conductor con grafico de barras. Se actualiza automaticamente al cambiar el tipo de reporte.
 
 #### Filtros
 
-| Campo | Tipo | Opciones |
-|---|---|---|
-| Tipo de reporte | select | Servicios, Ingresos, Por Conductor |
-| Fecha inicio | date | --- |
-| Fecha fin | date | --- |
+- **Tipo de reporte** - tipo: select, opciones: Servicios, Ingresos, Por Conductor
+- **Fecha inicio** - tipo: date
+- **Fecha fin** - tipo: date
 
 - Boton "Buscar"
 - Auto-busca al cambiar tipo de reporte
@@ -299,54 +239,45 @@ Modulo de reportes con filtros por fecha y tipo. Tres tipos de reporte: servicio
 
 **Tabla Desktop / Tarjetas Mobile:**
 
-| Columna | Contenido |
-|---|---|
-| Fecha | fecha y hora formateada |
-| Conductor | nombre del conductor |
-| Placa | placa del vehiculo |
-| Tipo | tipo de servicio |
-| Origen | punto de origen |
-| Destino | punto de destino |
-| Precio | formato COP |
-| Estado | Badge: finalizado (verde), cancelado (rojo), en_curso (amarillo) |
+- **Fecha** - fecha y hora formateada
+- **Conductor** - nombre del conductor
+- **Placa** - placa del vehiculo
+- **Tipo** - tipo de servicio
+- **Origen** - punto de origen
+- **Destino** - punto de destino
+- **Precio** - formato COP
+- **Estado** - badge: finalizado (verde), cancelado (rojo), en_curso (amarillo)
 
 #### Reporte de Ingresos
 
 **Card Resumen:**
-- Total Ingresos (formato moneda COP)
-- Total Servicios (numero)
-- Promedio por servicio (calculado, solo si hay servicios)
+
+- **Total Ingresos** - formato moneda COP
+- **Total Servicios** - numero entero
+- **Promedio por servicio** - calculado, solo si hay servicios
 
 #### Reporte por Conductor
 
 **Grafico de barras horizontal:**
+
 - Barra con gradiente verde, ancho proporcional al maximo
 - Nombre del conductor, valor numerico, ingresos totales
 
 **Tabla Desktop / Tarjetas Mobile:**
 
-| Columna | Contenido |
-|---|---|
-| Nombre | nombre del conductor |
-| Cedula | numero de cedula |
-| Total | total de servicios |
-| Completados | servicios completados |
-| Ingresos | total de ingresos (COP) |
+- **Nombre** - nombre del conductor
+- **Cedula** - numero de cedula
+- **Total** - total de servicios realizados
+- **Completados** - servicios completados exitosamente
+- **Ingresos** - total de ingresos generados (COP)
 
 ---
 
 ### 7. Mi Perfil Admin
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/admin/perfil` |
-| **Layout** | AdminLayout |
-| **Titulo** | Mi Perfil |
-| **Archivo** | `modules/admin/views/PerfilView.vue` |
+**Ruta:** `/admin/perfil` | **Layout:** AdminLayout | **Archivo:** `modules/admin/views/PerfilView.vue`
 
-#### Descripcion
-
-Gestion del perfil del administrador: foto, datos personales, contrasena e informacion de cuenta.
+Gestion del perfil personal del administrador. Permite actualizar la foto de perfil, modificar datos personales como nombre, telefono y email, cambiar la contrasena de acceso y visualizar la informacion de cuenta en modo solo lectura.
 
 #### Foto de Perfil
 
@@ -356,32 +287,26 @@ Gestion del perfil del administrador: foto, datos personales, contrasena e infor
 
 #### Formulario: Datos Personales
 
-| Campo | Tipo | Requerido |
-|---|---|---|
-| Nombre completo | text | Si |
-| Telefono | tel | No |
-| Email | email | Si |
+- **Nombre completo** - tipo: text, requerido
+- **Telefono** - tipo: tel, opcional
+- **Email** - tipo: email, requerido
 
 - Boton "Guardar cambios" (deshabilitado durante guardado)
 - Mensaje de exito/error
 
 #### Formulario: Cambiar Contrasena
 
-| Campo | Tipo | Requerido |
-|---|---|---|
-| Contrasena actual | password | Si |
-| Nueva contrasena | password | Si (min 6 chars) |
+- **Contrasena actual** - tipo: password, requerido
+- **Nueva contrasena** - tipo: password, requerido (min 6 caracteres)
 
 - Boton "Cambiar contrasena" (outline)
 - Mensaje de exito/error
 
 #### Informacion de Cuenta (solo lectura)
 
-| Campo | Valor |
-|---|---|
-| Cedula | numero de cedula |
-| Rol | Administrador |
-| Estado | Badge "Activo" (verde) |
+- **Cedula** - numero de cedula
+- **Rol** - Administrador
+- **Estado** - badge "Activo" (verde)
 
 ---
 
@@ -389,19 +314,14 @@ Gestion del perfil del administrador: foto, datos personales, contrasena e infor
 
 ### 1. Login Conductor
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/conductor/login` |
-| **Layout** | Ninguno (card centrada) |
-| **Archivo** | `modules/conductor/views/LoginView.vue` |
-| **Subtitulo visible** | Ingreso Conductores |
+**Ruta:** `/conductor/login` | **Layout:** Ninguno (card centrada) | **Archivo:** `modules/conductor/views/LoginView.vue`
+
+Formulario de autenticacion para conductores del servicio de transporte rural. Muestra una card centrada sobre fondo gris con el subtitulo "Ingreso Conductores". Validad las credenciales y redirige al panel del conductor en caso de exito.
 
 #### Formulario de Login
 
-| Campo | Tipo | Requerido | Placeholder |
-|---|---|---|---|
-| Email | email | Si | correo@ejemplo.com |
-| Contrasena | password | Si | --- |
+- **Email** - tipo: email, requerido, placeholder: "correo@ejemplo.com"
+- **Contrasena** - tipo: password, requerido
 
 #### Funcionalidades
 
@@ -412,16 +332,9 @@ Gestion del perfil del administrador: foto, datos personales, contrasena e infor
 
 ### 2. Mi Panel (Dashboard)
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/conductor/dashboard` |
-| **Layout** | ConductorLayout |
-| **Titulo** | Mi Panel |
-| **Archivo** | `modules/conductor/views/DashboardView.vue` |
+**Ruta:** `/conductor/dashboard` | **Layout:** ConductorLayout | **Archivo:** `modules/conductor/views/DashboardView.vue`
 
-#### Descripcion
-
-Panel principal del conductor con servicio en curso, estado de disponibilidad, vehiculo activo y accesos rapidos.
+Panel principal del conductor que muestra el estado actual del servicio, incluyendo si hay un servicio en curso, su nivel de disponibilidad para接收 nuevos servicios, el vehiculo activo y accesos rapidos a las funcionalidades principales del modulo.
 
 #### Servicio en Curso (si existe)
 
@@ -465,16 +378,9 @@ Panel principal del conductor con servicio en curso, estado de disponibilidad, v
 
 ### 3. Registrar Servicio
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/conductor/servicio` |
-| **Layout** | ConductorLayout |
-| **Titulo** | Registrar Servicio |
-| **Archivo** | `modules/conductor/views/ServicioView.vue` |
+**Ruta:** `/conductor/servicio` | **Layout:** ConductorLayout | **Archivo:** `modules/conductor/views/ServicioView.vue`
 
-#### Descripcion
-
-Vista para registrar un nuevo servicio o gestionar el servicio activo actual.
+Vista dedicada para registrar nuevos servicios de transporte o gestionar el servicio actualmente activo. Si ya hay un servicio en curso, muestra sus detalles con opciones para finalizarlo o cancelarlo. De lo contrario, presenta el formulario de registro.
 
 #### Vista: Servicio en Curso (si existe)
 
@@ -482,13 +388,11 @@ Vista para registrar un nuevo servicio o gestionar el servicio activo actual.
 - Info: tipo, destino, precio (verde grande), hora de inicio
 - Botones: "Finalizar" (verde) + "Cancelar" (rojo con ConfirmDialog)
 
-#### Vista: Formulario de Nuevo Servicio (si NO hay servicio activo)
+#### Formulario de Nuevo Servicio (si NO hay servicio activo)
 
-| Campo | Tipo | Requerido | Descripcion |
-|---|---|---|---|
-| Tipo de Servicio | radio cards (grid 2x2) | Si | Opciones cargadas de API, cada una con nombre + descripcion |
-| Destino | text | Si | Placeholder: "Ej: Centro, Parque Principal..." |
-| Precio ($) | number | Si | min=0, Placeholder: "Ej: 15000" |
+- **Tipo de Servicio** - tipo: radio cards (grid 2x2), requerido, opciones cargadas desde API con nombre + descripcion
+- **Destino** - tipo: text, requerido, placeholder: "Ej: Centro, Parque Principal..."
+- **Precio ($)** - tipo: number, requerido, minimo: 0, placeholder: "Ej: 15000"
 
 - Boton "Iniciar Servicio" (full-width, deshabilitado si no hay tipo seleccionado)
 - Muestra errores del backend
@@ -504,16 +408,9 @@ Vista para registrar un nuevo servicio o gestionar el servicio activo actual.
 
 ### 4. Mis Vehiculos
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/conductor/vehiculos` |
-| **Layout** | ConductorLayout |
-| **Titulo** | Mis Vehiculos |
-| **Archivo** | `modules/conductor/views/VehiculosView.vue` |
+**Ruta:** `/conductor/vehiculos` | **Layout:** ConductorLayout | **Archivo:** `modules/conductor/views/VehiculosView.vue`
 
-#### Descripcion
-
-Lista de vehiculos asignados al conductor con opcion de seleccionar el vehiculo activo.
+Vista que muestra la lista de vehiculos asignados al conductor con su estado y documentos. Permite seleccionar cual vehiculo esta activo para realizar servicios, mostrando un indicador visual del vehiculo seleccionado actualmente.
 
 #### Estado Vacio
 
@@ -524,12 +421,10 @@ Lista de vehiculos asignados al conductor con opcion de seleccionar el vehiculo 
 
 Cada vehiculo muestra:
 
-| Elemento | Contenido |
-|---|---|
-| Header | Placa (grande) + Marca Modelo + Badge ACTIVO/INACTIVO |
-| Detalle | Color |
-| Documentos | Badge SOAT (verificado/no) + Badge Licencia (verificada/no) |
-| Accion | Boton "Seleccionar como activo" (solo si NO esta activo) |
+- **Header** - placa (grande) + Marca Modelo + Badge ACTIVO/INACTIVO
+- **Detalle** - color del vehiculo
+- **Documentos** - Badge SOAT (verificado/no) + Badge Licencia (verificada/no)
+- **Accion** - boton "Seleccionar como activo" (solo si NO esta activo)
 
 - El vehiculo activo tiene borde lateral verde
 
@@ -537,22 +432,13 @@ Cada vehiculo muestra:
 
 ### 5. Historial
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/conductor/historial` |
-| **Layout** | ConductorLayout |
-| **Titulo** | Historial |
-| **Archivo** | `modules/conductor/views/HistorialView.vue` |
+**Ruta:** `/conductor/historial` | **Layout:** ConductorLayout | **Archivo:** `modules/conductor/views/HistorialView.vue`
 
-#### Descripcion
-
-Historial de servicios del conductor con filtros, estadisticas y vista expandible (accordion).
+Historial completo de servicios realizados por el conductor con sistema de filtros y estadisticas de rendimiento. Los servicios se muestran como tarjetas expandibles (accordion) que revelan detalles adicionales al hacer click, como fechas de inicio y fin.
 
 #### Filtros
 
-| Campo | Tipo | Opciones |
-|---|---|---|
-| Filtro | select | Todos, Finalizados, Cancelados |
+- **Filtro** - tipo: select, opciones: Todos, Finalizados, Cancelados
 
 #### Estadisticas
 
@@ -568,13 +454,12 @@ Historial de servicios del conductor con filtros, estadisticas y vista expandibl
 
 Cada servicio es una tarjeta clickeable:
 
-| Elemento | Contenido |
-|---|---|
-| Top | Badge de estado + Fecha |
-| Body | Ruta: origen (pin verde) -> flecha -> destino (bandera) |
-| Footer | Precio (verde, grande) + Tipo de servicio |
+- **Top** - badge de estado + fecha
+- **Body** - ruta: origen (pin verde) -> flecha -> destino (bandera)
+- **Footer** - precio (verde, grande) + tipo de servicio
 
 **Al hacer click se expande mostrando:**
+
 - Tipo de servicio
 - Inicio (fecha y hora)
 - Fin (si existe)
@@ -586,16 +471,9 @@ Cada servicio es una tarjeta clickeable:
 
 ### 6. Mi Perfil Conductor
 
-| Propiedad | Valor |
-|---|---|
-| **Ruta** | `/conductor/perfil` |
-| **Layout** | ConductorLayout |
-| **Titulo** | Mi Perfil |
-| **Archivo** | `modules/conductor/views/PerfilView.vue` |
+**Ruta:** `/conductor/perfil` | **Layout:** ConductorLayout | **Archivo:** `modules/conductor/views/PerfilView.vue`
 
-#### Descripcion
-
-Gestion del perfil del conductor: foto, datos personales, contrasena e informacion de cuenta.
+Gestion del perfil personal del conductor. Permite actualizar la foto de perfil, modificar datos personales, cambiar la contrasena de acceso y visualizar la informacion de cuenta. Mantiene la misma estructura que el perfil del administrador.
 
 #### Foto de Perfil
 
@@ -604,31 +482,25 @@ Gestion del perfil del conductor: foto, datos personales, contrasena e informaci
 
 #### Formulario: Datos Personales
 
-| Campo | Tipo | Requerido |
-|---|---|---|
-| Nombre completo | text | Si |
-| Telefono | tel | No |
-| Email | email | Si |
+- **Nombre completo** - tipo: text, requerido
+- **Telefono** - tipo: tel, opcional
+- **Email** - tipo: email, requerido
 
 - Boton "Guardar cambios"
 - Mensaje de exito/error
 
 #### Formulario: Cambiar Contrasena
 
-| Campo | Tipo | Requerido |
-|---|---|---|
-| Contrasena actual | password | Si |
-| Nueva contrasena | password | Si (min 6 chars) |
+- **Contrasena actual** - tipo: password, requerido
+- **Nueva contrasena** - tipo: password, requerido (min 6 caracteres)
 
 - Boton "Cambiar contrasena" (outline)
 
 #### Informacion de Cuenta (solo lectura)
 
-| Campo | Valor |
-|---|---|
-| Cedula | numero de cedula |
-| Rol | valor dinamico del perfil |
-| Estado | Badge Activo/Inactivo |
+- **Cedula** - numero de cedula
+- **Rol** - valor dinamico del perfil
+- **Estado** - badge Activo/Inactivo
 
 ---
 
@@ -636,13 +508,12 @@ Gestion del perfil del conductor: foto, datos personales, contrasena e informaci
 
 ### ConfirmDialog
 
-| Propiedad | Valor |
-|---|---|
-| **Archivo** | `components/ConfirmDialog.vue` |
+**Archivo:** `components/ConfirmDialog.vue`
 
-Dialogo modal de confirmacion con teleport a `<body>`.
+Dialogo modal de confirmacion que se teletransporta al body del documento. Se utiliza para confirmar acciones criticas como inhabilitar conductores, verificar documentos, cancelar servicios o cerrar sesion con servicio activo.
 
 **Props:**
+
 - `show` (Boolean) - controla visibilidad
 - `titulo` (String, default "Confirmar")
 - `mensaje` (String, default "¿Estas seguro?")
@@ -657,16 +528,16 @@ Dialogo modal de confirmacion con teleport a `<body>`.
 
 ### PhotoUpload
 
-| Propiedad | Valor |
-|---|---|
-| **Archivo** | `components/PhotoUpload.vue` |
+**Archivo:** `components/PhotoUpload.vue`
 
-Selector de imagen con preview circular y subida automatica.
+Selector de imagen con vista previa circular y subida automatica al servidor. Muestra la foto actual del usuario y permite cambiarla seleccionando un archivo del dispositivo. Incluye spinner de carga y actualizacion automatica del estado de autenticacion.
 
 **Props:**
+
 - `placeholder` (String, default "camara")
 
 **Funcionalidad:**
+
 - Click para seleccionar imagen (acepta JPEG, PNG, WebP)
 - Muestra preview circular (100x100px, borde verde)
 - Sube via `POST /upload/foto` con FormData
@@ -678,13 +549,12 @@ Selector de imagen con preview circular y subida automatica.
 
 ### ToastMessage
 
-| Propiedad | Valor |
-|---|---|
-| **Archivo** | `components/ToastMessage.vue` |
+**Archivo:** `components/ToastMessage.vue`
 
-Notificacion toast fija arriba-derecha.
+Componente de notificacion toast que aparece fijo en la esquina superior derecha de la pantalla. Muestra mensajes de exito, error, advertencia o informacion con un icono representativo y animacion de entrada slideIn.
 
 **Props:**
+
 - `show` (Boolean)
 - `mensaje` (String)
 - `type` (String: success/error/warning/info, default "success")
